@@ -1,3 +1,5 @@
+import math
+
 class Node():
     def __init__(self, valore):
         self.valore = valore
@@ -38,32 +40,25 @@ class Node():
                 return self.destro.find(valore)
         return False
     
-    def contaNodi(self, n_nodi):
-        if self.valore is not None:
-            if self.sinistro is not None:
-                self.sinistro.contaNodi(n_nodi)
-            n_nodi+=1
-            if self.destro is not None:
-                self.destro.contaNodi(n_nodi)
-        return n_nodi
-    
+    def contaNodi(self, contNodi):
+        contNodi += 1
+        if self.sinistro is not None:
+            contNodi = self.sinistro.contaNodi(contNodi)
+        if self.destro is not None:
+            contNodi = self.destro.contaNodi(contNodi)
+        
+        return contNodi
     def calcolaAltezza(self):
-        if self is None:
-            return 0
-        else:
-            altezza_sinistro = 0
-            altezza_destro = 0
-            if self.sinistro is not None:
-                altezza_sinistro = self.sinistro.calcolaAltezza()
-            if self.destro is not None:
-                altezza_destro = self.destro.calcolaAltezza()
-            return max(altezza_sinistro, altezza_destro) + 1
+        if self.sinistro is not None:
+            altLeft = self.sinistro.calcolaAltezza(altRight, altLeft + 1)
+        if self.destro is not None:
+            altRight = self.destro.calcolaAltezza(altRight + 1, altLeft)
 
+        return max(altRight, altLeft)
+        
     def bilanciato(self):
         #sapere n nodi e altezza
-        n_nodi = self.contaNodi(0)
-        altezza = self.calcolaAltezza()
-
+        return self.calcolaAltezza(0, 0) == int(math.log2(self.contaNodi(0)))
             
         
 def caricamentoLista(lista, n):
@@ -92,6 +87,7 @@ def main():
     n_2 = Node(None)
     caricamentoLista(lista_nodi,n_2)
     n_2.printTree()
+    print(n_2.bilanciato())
     
     
 if __name__ == '__main__':
